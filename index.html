@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Intrusion Detection — Live Predictor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v={{ static_version }}" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="brand">
+        <div class="dot"></div>
+        <h1>Intrusion Detection</h1>
+      </div>
+      <p class="subtitle">
+        Enter feature values (original strings for <code>protocol_type</code>, <code>service</code>, <code>flag</code>) to get a prediction.
+      </p>
+    </header>
+
+    {% if errors and errors|length %}
+      <div class="alert alert-error">
+        <strong>Fix the following:</strong>
+        <ul>
+          {% for e in errors %}
+            <li>{{ e }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <section class="card">
+      <form method="POST" action="{{ url_for('predict') }}">
+        <div class="grid">
+          {% for feat in feature_names %}
+            <div class="field">
+              <label for="{{ feat }}">{{ feat }}</label>
+
+              {% if feat in categoricals %}
+                <select id="{{ feat }}" name="{{ feat }}" required>
+                  <option value="" disabled {% if not form_values.get(feat) %}selected{% endif %}>Select {{ feat }}</option>
+                  {% for opt in cat_options[feat] %}
+                    <option value="{{ opt }}" {% if form_values.get(feat) == opt %}selected{% endif %}>{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              {% else %}
+                <input
+                  id="{{ feat }}"
+                  name="{{ feat }}"
+                  type="number"
+                  step="any"
+                  placeholder="Enter {{ feat }}"
+                  value="{{ form_values.get(feat, '') }}"
+                  required
+                />
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="row">
+          <div class="field w-40">
+            <label for="threshold">Decision threshold (optional, 0–1)</label>
+            <input id="threshold" name="threshold" type="number" min="0" max="1" step="0.01"
+                   placeholder="e.g., 0.50" value="{{ threshold if threshold is not none else '' }}">
+            <small class="muted">If provided and probabilities are available, ≥ τ → anomaly.</small>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Predict</button>
+          <a href="{{ url_for('home') }}" class="btn">Reset</a>
+        </div>
+      </form>
+    </section>
+
+    {% if result %}
+      <section class="result">
+        <div class="result-card">
+          <div class="result-top">
+            <div class="pill {{ 'ok' if result.label == 'normal' else 'bad' }}">
+              {{ result.label|capitalize }}
+            </div>
+            <div class="result-meta">
+              <span class="meta">Label ID: <strong>{{ result.label_id }}</strong></span>
+              {% if result.anomaly_prob is not none %}
+                <span class="meta">Anomaly Probability:
+                  <strong>{{ '%.4f'|format(result.anomaly_prob) }}</strong>
+                </span>
+              {% endif %}
+              {% if result.threshold is not none %}
+                <span class="meta">Threshold: <strong>{{ '%.2f'|format(result.threshold) }}</strong></span>
+                {% if result.overridden %}
+                  <span class="badge">Threshold Applied</span>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="result-body">
+            <h3>Input Summary</h3>
+            <div class="kv-grid">
+              {% for feat in feature_names %}
+                <div class="kv">
+                  <span class="k">{{ feat }}</span>
+                  <span class="v">{{ form_values.get(feat, '') }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    <footer class="footer">
+      <span>Model: <code>model.joblib</code></span>
+      <span>Features: <code>feature_names.json</code></span>
+      <span>Cat Encoders: <code>cat_encoders.json</code></span>
+      <span>Labels: <code>label_mapping.json</code></span>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* Vibrant gradient + clean card UI */
+:root {
+  --bg-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  --card-bg: #ffffffee;
+  --text: #1e1e2d;
+  --muted: #5e647a;
+  --border: #e6e8f0;
+  --accent: #6c63ff;
+  --accent2: #8ea1ff;
+  --ok: #21ba72;
+  --bad: #f04f57;
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; min-height: 100vh;
+  background: var(--bg-gradient);
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+}
+
+.wrap { max-width: 1120px; margin: 40px auto; padding: 0 18px; }
+
+/* Header */
+.header .brand { display: flex; align-items: center; gap: 12px; }
+.header .dot { width: 12px; height: 12px; border-radius: 999px; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+h1 { margin: 0; font-size: 32px; background: linear-gradient(90deg, #6c63ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.subtitle { color: var(--muted); margin: .5rem 0 1.4rem; }
+
+/* Cards */
+.card, .result-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+}
+
+/* Grid form */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px,1fr));
+  gap: 14px;
+}
+@media (max-width: 900px){ .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px){ .grid { grid-template-columns: 1fr; } }
+
+.field label { display: block; font-weight: 600; margin-bottom: 6px; }
+.field input, .field select {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: #fff; font-size: 14px; outline: none;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 6px rgba(108, 99, 255, .35); }
+
+.row { margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+.w-40 { flex: 0 0 340px; max-width: 100%; }
+
+.muted { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* Buttons */
+.actions { margin-top: 18px; display: flex; gap: 12px; }
+.btn {
+  display: inline-block; padding: 10px 16px; border-radius: 12px;
+  border: none; cursor: pointer; font-weight: 700; font-size: 14px; text-decoration: none;
+  transition: transform .06s ease, filter .2s ease;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.btn.primary {
+  background: linear-gradient(135deg, #6c63ff, #00d4ff);
+  color: #fff; box-shadow: 0 6px 16px rgba(0, 158, 255, .35);
+}
+.btn { background: #eef2ff; color: #2a2f45; border: 1px solid var(--border); }
+
+/* Alerts */
+.alert { border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+.alert-error { background: #ffe6e7; border: 1px solid #f4b6ba; color: #7d1f22; }
+
+/* Results */
+.result { margin-top: 20px; }
+.result-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.pill { padding: 8px 14px; border-radius: 999px; font-weight: 800; letter-spacing: .2px; font-size: 13px; }
+.pill.ok { background: #dff7ef; color: var(--ok); }
+.pill.bad { background: #ffe0e2; color: var(--bad); }
+
+.result-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+.meta { color: var(--muted); }
+.badge { color: var(--accent); border: 1px dashed var(--accent); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+
+.result-body h3 { margin: 1rem 0 .6rem; }
+.kv-grid { display: grid; grid-template-columns: repeat(3, minmax(220px,1fr)); gap: 10px; }
+@media (max-width: 900px){ .kv-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px){ .kv-grid { grid-template-columns: 1fr; } }
+.kv { background: #f7f9ff; border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 14px; }
+.kv .k { color: var(--muted); }
+.kv .v { font-weight: 700; }
+
+.footer { margin-top: 20px; font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
